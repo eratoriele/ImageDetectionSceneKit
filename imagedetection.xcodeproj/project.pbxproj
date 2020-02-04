@@ -35,7 +35,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		2255078A23E2F84700220D35 /* imagedetection.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = imagedetection.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		2255078A23E2F84700220D35 /* imageDetection.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = imageDetection.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		2255078D23E2F84700220D35 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		2255078F23E2F84700220D35 /* art.scnassets */ = {isa = PBXFileReference; lastKnownFileType = wrapper.scnassets; path = art.scnassets; sourceTree = "<group>"; };
 		2255079123E2F84700220D35 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -89,7 +89,7 @@
 		2255078B23E2F84700220D35 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				2255078A23E2F84700220D35 /* imagedetection.app */,
+				2255078A23E2F84700220D35 /* imageDetection.app */,
 				225507A023E2F85E00220D35 /* imagedetectionTests.xctest */,
 				225507AB23E2F85E00220D35 /* imagedetectionUITests.xctest */,
 			);
@@ -145,7 +145,7 @@
 			);
 			name = imagedetection;
 			productName = imagedetection;
-			productReference = 2255078A23E2F84700220D35 /* imagedetection.app */;
+			productReference = 2255078A23E2F84700220D35 /* imageDetection.app */;
 			productType = "com.apple.product-type.application";
 		};
 		2255079F23E2F85E00220D35 /* imagedetectionTests */ = {
@@ -442,7 +442,7 @@
 					"@executable_path/Frameworks",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.BoraGulerman.imagedetection;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = imageDetection;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -460,7 +460,7 @@
 					"@executable_path/Frameworks",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.BoraGulerman.imagedetection;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = imageDetection;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};

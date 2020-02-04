@@ -14,6 +14,9 @@ class ViewController: UIViewController, ARSCNViewDelegate {
 
     @IBOutlet var sceneView: ARSCNView!
     
+    var nodePositions = [String: SCNVector3]()
+    var nodeID = 0
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -24,7 +27,7 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         sceneView.showsStatistics = true
         
         // Create a new scene
-        let scene = SCNScene(named: "art.scnassets/ship.scn")!
+        let scene = SCNScene(named: "art.scnassets/empty.scn")!
         
         // Set the scene to the view
         sceneView.scene = scene
@@ -34,8 +37,15 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         super.viewWillAppear(animated)
         
         // Create a session configuration
-        let configuration = ARWorldTrackingConfiguration()
+        let configuration = ARImageTrackingConfiguration()
+        
+        guard let trackedImages = ARReferenceImage.referenceImages(inGroupNamed: "trackImages", bundle: Bundle.main) else {
+            return
+        }
 
+        configuration.trackingImages = trackedImages
+        configuration.maximumNumberOfTrackedImages = 5
+        
         // Run the view's session
         sceneView.session.run(configuration)
     }
@@ -48,28 +58,49 @@ class ViewController: UIViewController, ARSCNViewDelegate {
     }
 
     // MARK: - ARSCNViewDelegate
-    
-/*
-    // Override to create and configure nodes for anchors added to the view's session.
+ 
     func renderer(_ renderer: SCNSceneRenderer, nodeFor anchor: ARAnchor) -> SCNNode? {
         let node = SCNNode()
-     
+        
+        if anchor is ARImageAnchor {
+            let ball = SCNSphere(radius: 0.01)
+            ball.firstMaterial?.diffuse.contents = UIColor.cyan
+            let ballNode = SCNNode(geometry: ball)
+            
+            ballNode.name = "node \(nodeID)"
+            nodePositions[ballNode.name!] = ballNode.worldPosition
+            nodeID += 1
+            
+            node.addChildNode(ballNode)
+        }
+        
         return node
     }
-*/
     
-    func session(_ session: ARSession, didFailWithError error: Error) {
-        // Present an error message to the user
+    
+    func renderer(_ renderer: SCNSceneRenderer, didAdd node: SCNNode, for anchor: ARAnchor) {
+        guard anchor is ARImageAnchor else {
+            return
+        }
         
+        print(node.worldPosition)
+        //print(node.worldTransform)
+        //print(node.worldOrientation)
+        //print(node.simdWorldPosition)
     }
     
-    func sessionWasInterrupted(_ session: ARSession) {
-        // Inform the user that the session has been interrupted, for example, by presenting an overlay
+    func renderer(_ renderer: SCNSceneRenderer, didUpdate node: SCNNode, for anchor: ARAnchor) {
+        guard anchor is ARImageAnchor else {
+            return
+        }
         
-    }
-    
-    func sessionInterruptionEnded(_ session: ARSession) {
-        // Reset tracking and/or remove existing anchors if consistent tracking is required
+        nodePositions.updateValue(node.childNodes[0].worldPosition, forKey: node.childNodes[0].name!)
+        
+        print("\n\n")
+        for i in 0...nodePositions.count - 1 {
+
+            print(i, " ", nodePositions["node \(i)"]!)
+        }
         
     }
 }
