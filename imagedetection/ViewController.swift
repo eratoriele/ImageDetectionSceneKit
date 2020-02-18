@@ -37,13 +37,13 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         super.viewWillAppear(animated)
         
         // Create a session configuration
-        let configuration = ARImageTrackingConfiguration()
+        let configuration = ARWorldTrackingConfiguration()
         
         guard let trackedImages = ARReferenceImage.referenceImages(inGroupNamed: "trackImages", bundle: Bundle.main) else {
             return
         }
 
-        configuration.trackingImages = trackedImages
+        configuration.detectionImages = trackedImages
         configuration.maximumNumberOfTrackedImages = 5
         
         // Run the view's session
@@ -63,15 +63,16 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         let node = SCNNode()
         
         if anchor is ARImageAnchor {
-            let ball = SCNSphere(radius: 0.01)
-            ball.firstMaterial?.diffuse.contents = UIColor.cyan
-            let ballNode = SCNNode(geometry: ball)
+            let cylinder = SCNCylinder(radius: 0.1, height: 0.5)
+            cylinder.firstMaterial?.diffuse.contents = UIColor.cyan
+            let ballNode = SCNNode(geometry: cylinder)
             
             ballNode.name = "node \(nodeID)"
             nodePositions[ballNode.name!] = ballNode.worldPosition
             nodeID += 1
             
             node.addChildNode(ballNode)
+            ballNode.eulerAngles.x = -.pi / 2
         }
         
         return node
@@ -90,17 +91,47 @@ class ViewController: UIViewController, ARSCNViewDelegate {
     }
     
     func renderer(_ renderer: SCNSceneRenderer, didUpdate node: SCNNode, for anchor: ARAnchor) {
-        guard anchor is ARImageAnchor else {
-            return
-        }
-        
-        nodePositions.updateValue(node.childNodes[0].worldPosition, forKey: node.childNodes[0].name!)
-        
-        print("\n\n")
-        for i in 0...nodePositions.count - 1 {
+        if anchor is ARImageAnchor {
+            nodePositions.updateValue(node.childNodes[0].worldPosition, forKey: node.childNodes[0].name!)
+                
+            print("\n\n")
+            for i in 0...nodePositions.count - 1 {
 
-            print(i, " ", nodePositions["node \(i)"]!)
+                print(nodePositions.count, " ", nodePositions["node \(i)"]!)
+            }
+            
+            if (nodePositions.count > 1) {
+                
+                sceneView.scene.rootNode.enumerateChildNodes { (node, stop) in
+                    if node.name == "planeplanenode" {
+                        node.removeFromParentNode()
+                    }
+                }
+                
+                let centerx = (nodePositions["node 0"]!.x + nodePositions["node 1"]!.x) / 2
+                let centery = (nodePositions["node 0"]!.y + nodePositions["node 1"]!.y) / 2
+                let centerz = (nodePositions["node 0"]!.z + nodePositions["node 1"]!.z) / 2
+                
+                let width = nodePositions["node 0"]!.x - nodePositions["node 1"]!.x
+                let height = nodePositions["node 0"]!.y - nodePositions["node 1"]!.y
+                
+                let plane = SCNPlane(width: CGFloat(abs(width)), height: CGFloat(abs(height)))
+                plane.firstMaterial?.diffuse.contents = UIColor.red
+                let planeNode = SCNNode(geometry: plane)
+                
+                //planeNode.eulerAngles.x = width * Float.pi
+                //planeNode.eulerAngles.y = height * Float.pi
+                //planeNode.eulerAngles.z = (nodePositions["node 0"]!.z - nodePositions["node 1"]!.z) * Float.pi
+                
+                planeNode.worldPosition = SCNVector3(centerx, centery, centerz)
+                planeNode.name = "planeplanenode"
+                
+                sceneView.scene.rootNode.addChildNode(planeNode)
+            }
+            
         }
+        
+        
         
     }
 }
